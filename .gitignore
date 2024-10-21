@@ -10,3 +10,7 @@ target
 /bazel-*
 # Because our tool/release script doesn't handle the project version in this file
 Cargo.lock
+
+# zig stuff
+.zig-cache
+zig-out

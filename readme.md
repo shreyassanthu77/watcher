@@ -89,6 +89,57 @@ int main() {
 </details>
 
 <details>
+<summary>Zig</summary>
+
+```bash
+zig fetch --save git+https://github.com/e-dant/watcher
+```
+
+```zig
+// build.zig
+const std = @import("std");
+
+pub fn build(b: *std.Build) void {
+
+    // ... regular zig build file
+    const watcher = b.dependency("watcher", .{
+        .target = target,
+        .optimize = optimize,
+    });
+    // ... add the artifacts
+    exe.linkLibrary(watcher.artifact("watcher"));
+    exe.root_module.addImport("watcher", watcher.module("watcher")); // for zls autocomplete (no zig native bindings yet)
+
+    // rest of you build file
+}
+    ```
+
+```zig
+// main.zig
+const std = @import("std");
+
+// include the watcher header
+const watcher = @cImport({
+    @cInclude("wtr/watcher-c.h");
+});
+
+// and...just use it.
+pub fn main() !void {
+    const cb = struct {
+        pub fn cb(ev: watcher.wtr_watcher_event, _: ?*anyopaque) callconv(.C) void {
+            std.debug.print("{}", .{ev});
+        }
+    }.cb;
+    const w = watcher.wtr_watcher_open(".", cb, null);
+    defer watcher.wtr_watcher_close(w);
+    while (true) {
+        std.time.sleep(std.time.ns_per_s);
+    }
+}
+```
+</details>
+
+<details>
 <summary>Python</summary>
 
 ```sh

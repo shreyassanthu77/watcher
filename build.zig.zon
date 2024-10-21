@@ -1,0 +1,12 @@
+.{
+    .name = "watcher",
+    .version = "0.0.0",
+    .dependencies = .{},
+    .paths = .{
+        "watcher-c/",
+        "watcher-zig/",
+        "include/",
+        "build.zig",
+        "build.zig.zon",
+    },
+}
