@@ -117,21 +117,19 @@ pub fn build(b: *std.Build) void {
 ```zig
 // main.zig
 const std = @import("std");
+const Watcher = @import("watcher");
 
-// include the watcher header
-const watcher = @cImport({
-    @cInclude("wtr/watcher-c.h");
-});
-
-// and...just use it.
 pub fn main() !void {
     const cb = struct {
-        pub fn cb(ev: watcher.wtr_watcher_event, _: ?*anyopaque) callconv(.C) void {
+        pub fn cb(ev: Watcher.Event, _: ?*anyopaque) callconv(.C) void {
             std.debug.print("{}", .{ev});
         }
     }.cb;
-    const w = watcher.wtr_watcher_open(".", cb, null);
-    defer watcher.wtr_watcher_close(w);
+    var watcher = Watcher.init(".", cb, null);
+    defer watcher.deinit() catch @panic("deinit failed, could be because the path is wrong");
+
+    watcher.start(); // no-op if already started
+
     while (true) {
         std.time.sleep(std.time.ns_per_s);
     }

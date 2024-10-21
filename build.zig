@@ -24,13 +24,10 @@ pub fn build(b: *std.Build) void {
     });
     lib.installHeadersDirectory(b.path("include"), ".", .{});
     lib.installHeadersDirectory(b.path("watcher-c/include"), ".", .{});
-
     b.installArtifact(lib);
 
     const module = b.addModule("watcher", .{
         .root_source_file = b.path("watcher-zig/lib.zig"),
     });
     module.linkLibrary(lib);
-    module.addIncludePath(b.path("include"));
-    module.addIncludePath(b.path("watcher-c/include"));
 }
